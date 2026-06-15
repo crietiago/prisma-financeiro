@@ -11,7 +11,7 @@ Para usar `prismafinanceiro.app.br` na Vercel:
 ```text
 Tipo  Nome  Valor
 A     @     76.76.21.21
-CNAME www   cname.vercel-dns.com
+CNAME www   cname.vercel-dns-0.com
 ```
 
-A propagacao pode levar alguns minutos, mas em alguns provedores pode demorar algumas horas.
+A propagacao pode levar alguns minutos, mas em alguns provedores pode demorar algumas horas. Depois de adicionar o dominio na Vercel, confirme os valores finais recomendados em **Settings > Domains** ou com `vercel domains inspect prismafinanceiro.app.br`.
