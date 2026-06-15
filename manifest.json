@@ -1,0 +1,27 @@
+{
+  "name": "Prisma Financeiro",
+  "short_name": "Prisma",
+  "description": "Clareza financeira para pessoas e familias.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#050117",
+  "theme_color": "#2D2B6B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Abrir app",
+      "short_name": "App",
+      "url": "/app.html",
+      "description": "Abrir o app Prisma Financeiro"
+    }
+  ]
+}
