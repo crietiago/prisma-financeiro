@@ -47,7 +47,7 @@ Depois acesse:
 No provedor onde o dominio `prismafinanceiro.app.br` foi comprado, aponte:
 
 - `A` para `76.76.21.21` no dominio raiz `prismafinanceiro.app.br`
-- `CNAME` de `www` para `cname.vercel-dns-0.com`
+- `A` para `76.76.21.21` em `www.prismafinanceiro.app.br`
 
 Depois configure os dois dominios na Vercel:
 
