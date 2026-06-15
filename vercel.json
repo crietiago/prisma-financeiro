@@ -1,6 +1,4 @@
 {
-  "cleanUrls": false,
-  "trailingSlash": false,
   "headers": [
     {
       "source": "/service-worker.js",

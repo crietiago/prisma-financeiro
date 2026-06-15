@@ -1,0 +1,112 @@
+.login-shell {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  font-family: Nunito, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #fff;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(245, 160, 32, .18), transparent 28%),
+    radial-gradient(circle at 82% 14%, rgba(122, 181, 238, .20), transparent 28%),
+    linear-gradient(155deg, #050117 0%, #130749 58%, #2D2B6B 100%);
+}
+
+.login-card {
+  width: min(100%, 430px);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 28px;
+  padding: 32px;
+  background: rgba(255, 255, 255, .08);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, .35);
+  backdrop-filter: blur(18px);
+}
+
+.login-icon {
+  width: 62px;
+  height: 62px;
+  display: block;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #FFAA2A;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.login-card h1 {
+  margin: 0;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.lead {
+  margin: 14px 0 24px;
+  color: rgba(255, 255, 255, .74);
+  line-height: 1.55;
+}
+
+.alert,
+.success {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.alert {
+  color: #FFE9E9;
+  background: rgba(255, 91, 91, .18);
+  border: 1px solid rgba(255, 91, 91, .24);
+}
+
+.success {
+  color: #E7FFF0;
+  background: rgba(67, 241, 129, .14);
+  border: 1px solid rgba(67, 241, 129, .22);
+}
+
+.login-form {
+  display: grid;
+  gap: 10px;
+}
+
+.login-form label {
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, .78);
+}
+
+.login-form input {
+  width: 100%;
+  height: 52px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 16px;
+  padding: 0 14px;
+  color: #fff;
+  background: rgba(255, 255, 255, .10);
+  outline: none;
+  font: inherit;
+}
+
+.login-form input:focus {
+  border-color: #71F0FF;
+  box-shadow: 0 0 0 4px rgba(113, 240, 255, .12);
+}
+
+.login-form button {
+  height: 54px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 999px;
+  color: #2D2B6B;
+  background: #fff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}

@@ -1,15 +1,14 @@
-const CACHE_NAME = "prisma-financeiro-v1";
-const APP_SHELL = [
+const CACHE_NAME = "prisma-financeiro-v2";
+const PUBLIC_SHELL = [
   "/",
-  "/index.html",
-  "/app.html",
+  "/entrar",
   "/manifest.json",
   "/assets/icon.svg"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PUBLIC_SHELL))
   );
   self.skipWaiting();
 });
@@ -26,17 +25,27 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
+  const url = new URL(event.request.url);
+  const isAppRoute = url.pathname === "/app" || url.pathname === "/app.html";
+
+  if (isAppRoute) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
 
       return fetch(event.request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
           return response;
         })
-        .catch(() => caches.match("/index.html"));
+        .catch(() => caches.match("/"));
     })
   );
 });

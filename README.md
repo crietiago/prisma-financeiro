@@ -1,15 +1,25 @@
 # Prisma Financeiro
 
-Projeto Web/PWA do Prisma Financeiro.
+Web app/PWA do Prisma Financeiro com site institucional publico e app protegido por entrada autenticada.
 
-## Estrutura
+## Rotas
 
-- `index.html`: site institucional.
-- `app.html`: app Prisma Financeiro.
-- `manifest.json`: configuracao PWA.
-- `service-worker.js`: cache offline basico.
-- `assets/`: icones e ativos publicos.
-- `vercel.json`: configuracao para deploy na Vercel.
+- `/`: site institucional.
+- `/entrar`: tela de acesso.
+- `/app` e `/app.html`: app Prisma Financeiro protegido por sessao.
+
+## Autenticacao
+
+A entrada do app usa uma senha de acesso definida por variavel de ambiente e cria uma sessao em cookie HTTP-only assinado.
+
+Crie um arquivo `.env.local` para desenvolvimento:
+
+```bash
+APP_ACCESS_PASSWORD=troque-esta-senha
+AUTH_SECRET=gere-um-segredo-longo
+```
+
+Sem `.env.local`, o ambiente local aceita a senha `prisma2026`. Em producao, defina obrigatoriamente `APP_ACCESS_PASSWORD`.
 
 ## Rodar localmente
 
@@ -20,15 +30,26 @@ npm run dev
 
 Depois acesse:
 
-- Site: `http://localhost:5173/`
-- App: `http://localhost:5173/app.html`
+- Site: `http://localhost:3000/`
+- App: `http://localhost:3000/app.html`
 
-## Deploy gratuito na Vercel
+## Deploy na Vercel
 
-1. Suba este projeto para o GitHub.
-2. Acesse https://vercel.com/new.
-3. Importe o repositorio `prisma-financeiro`.
-4. Use as configuracoes padrao de projeto estatico.
-5. Clique em **Deploy**.
+1. Importe o repositorio `crietiago/prisma-financeiro` na Vercel.
+2. Configure as variaveis:
+   - `APP_ACCESS_PASSWORD`
+   - `AUTH_SECRET`
+3. Publique o projeto.
+4. Adicione o dominio `prismafinanceiro.app.br` ao projeto.
 
-O site institucional fica na raiz e o app fica em `/app.html`.
+## DNS para o dominio
+
+No provedor onde o dominio `prismafinanceiro.app.br` foi comprado, aponte:
+
+- `A` para `76.76.21.21` no dominio raiz `prismafinanceiro.app.br`
+- `CNAME` de `www` para `cname.vercel-dns.com`
+
+Depois configure os dois dominios na Vercel:
+
+- `prismafinanceiro.app.br`
+- `www.prismafinanceiro.app.br`
