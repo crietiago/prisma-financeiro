@@ -1,7 +1,10 @@
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { getSupabaseUser, isSupabaseConfigured } from "./supabase";
 
 const COOKIE_NAME = "prisma_session";
+const SUPABASE_ACCESS_COOKIE = "prisma_supabase_access";
+const SUPABASE_REFRESH_COOKIE = "prisma_supabase_refresh";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 14;
 
 function getSecret() {
@@ -45,8 +48,51 @@ export function isValidSessionToken(token?: string) {
 }
 
 export async function isAuthenticated() {
+  if (isSupabaseConfigured() && (await getCurrentSupabaseUser())) return true;
+
   const store = await cookies();
   return isValidSessionToken(store.get(COOKIE_NAME)?.value);
+}
+
+export async function getSupabaseAccessToken() {
+  const store = await cookies();
+  return store.get(SUPABASE_ACCESS_COOKIE)?.value;
+}
+
+export async function getCurrentSupabaseUser() {
+  const token = await getSupabaseAccessToken();
+  return getSupabaseUser(token);
+}
+
+export async function setSupabaseSessionCookies(session: {
+  access_token?: string;
+  refresh_token?: string;
+  expires_in?: number;
+}) {
+  if (!session.access_token) return false;
+
+  const store = await cookies();
+  const maxAge = Math.max(60, Number(session.expires_in || 3600));
+
+  store.set(SUPABASE_ACCESS_COOKIE, session.access_token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge,
+    path: "/",
+  });
+
+  if (session.refresh_token) {
+    store.set(SUPABASE_REFRESH_COOKIE, session.refresh_token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: SESSION_TTL_SECONDS,
+      path: "/",
+    });
+  }
+
+  return true;
 }
 
 export async function setSessionCookie() {
@@ -63,6 +109,20 @@ export async function setSessionCookie() {
 export async function clearSessionCookie() {
   const store = await cookies();
   store.set(COOKIE_NAME, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 0,
+    path: "/",
+  });
+  store.set(SUPABASE_ACCESS_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 0,
+    path: "/",
+  });
+  store.set(SUPABASE_REFRESH_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
