@@ -13,12 +13,14 @@ export async function POST(request: Request) {
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
   const next = nextPath(formData);
+  const welcomeUrl = new URL("/boas-vindas", request.url);
+  welcomeUrl.searchParams.set("next", next);
 
   if (!isSupabaseConfigured() || !name || !email || password.length < 8) {
     redirect(`/cadastro?erro=1&next=${encodeURIComponent(next)}`);
   }
 
-  const session = await signUpWithSupabase(email, password, name);
+  const session = await signUpWithSupabase(email, password, name, welcomeUrl.toString());
   if (!session) redirect(`/cadastro?erro=1&next=${encodeURIComponent(next)}`);
 
   if (await setSupabaseSessionCookies(session)) redirect(next);

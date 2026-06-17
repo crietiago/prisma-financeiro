@@ -50,8 +50,9 @@ export async function signInWithSupabase(email: string, password: string) {
   return (await response.json()) as SupabaseAuthSession;
 }
 
-export async function signUpWithSupabase(email: string, password: string, name: string) {
-  const response = await supabaseFetch("/auth/v1/signup", {
+export async function signUpWithSupabase(email: string, password: string, name: string, redirectTo?: string) {
+  const path = redirectTo ? `/auth/v1/signup?redirect_to=${encodeURIComponent(redirectTo)}` : "/auth/v1/signup";
+  const response = await supabaseFetch(path, {
     method: "POST",
     body: JSON.stringify({
       email,

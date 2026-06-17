@@ -22,6 +22,14 @@ O link de confirmacao usa a variavel oficial do Supabase:
 {{ .ConfirmationURL }}
 ```
 
+Configure tambem a URL publica do projeto para evitar redirecionamento para `localhost`:
+
+```text
+Authentication > URL Configuration
+Site URL: https://prismafinanceiro.app.br
+Redirect URLs: https://prismafinanceiro.app.br/boas-vindas
+```
+
 Para trocar o remetente `Supabase Auth <noreply@mail.app.supabase.io>`, configure SMTP proprio em:
 
 ```text
