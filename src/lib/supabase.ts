@@ -13,6 +13,14 @@ type SupabaseUser = {
   email?: string;
 };
 
+type ConsentMetadata = {
+  privacy_consent: true;
+  privacy_accepted_at: string;
+  privacy_version: string;
+  terms_version: string;
+  consent_ip_hash?: string;
+};
+
 function supabaseUrl() {
   return process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "") || "";
 }
@@ -50,14 +58,20 @@ export async function signInWithSupabase(email: string, password: string) {
   return (await response.json()) as SupabaseAuthSession;
 }
 
-export async function signUpWithSupabase(email: string, password: string, name: string, redirectTo?: string) {
+export async function signUpWithSupabase(
+  email: string,
+  password: string,
+  name: string,
+  redirectTo?: string,
+  consent?: ConsentMetadata,
+) {
   const path = redirectTo ? `/auth/v1/signup?redirect_to=${encodeURIComponent(redirectTo)}` : "/auth/v1/signup";
   const response = await supabaseFetch(path, {
     method: "POST",
     body: JSON.stringify({
       email,
       password,
-      data: { full_name: name },
+      data: { full_name: name, ...consent },
     }),
   });
 
@@ -92,6 +106,28 @@ export async function writeCloudState(accessToken: string, userId: string, data:
         prefer: "resolution=merge-duplicates,return=minimal",
       },
       body: JSON.stringify({ user_id: userId, data }),
+    },
+    accessToken,
+  );
+
+  return response.ok;
+}
+
+export async function writeConsentRecord(accessToken: string, userId: string, consent: ConsentMetadata) {
+  const response = await supabaseFetch(
+    "/rest/v1/user_consents",
+    {
+      method: "POST",
+      headers: {
+        prefer: "resolution=merge-duplicates,return=minimal",
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        accepted_at: consent.privacy_accepted_at,
+        terms_version: consent.terms_version,
+        privacy_version: consent.privacy_version,
+        ip_hash: consent.consent_ip_hash || null,
+      }),
     },
     accessToken,
   );

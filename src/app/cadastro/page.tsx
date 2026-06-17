@@ -1,4 +1,5 @@
 import { isAuthenticated } from "@/lib/auth";
+import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/compliance";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
@@ -35,6 +36,16 @@ export default async function CadastroPage({ searchParams }: { searchParams: Sea
           <input id="email" name="email" type="email" autoComplete="email" required />
           <label htmlFor="password">Senha</label>
           <input id="password" name="password" type="password" autoComplete="new-password" minLength={8} required />
+          <input type="hidden" name="termsVersion" value={TERMS_VERSION} />
+          <input type="hidden" name="privacyVersion" value={PRIVACY_VERSION} />
+          <label className="consent-check">
+            <input name="privacyConsent" type="checkbox" value="accepted" required />
+            <span>
+              Li e aceito os <a href="/termos" target="_blank">Termos de Uso</a> e a{" "}
+              <a href="/privacidade" target="_blank">Política de Privacidade</a>, incluindo o tratamento dos meus dados
+              para criar minha conta, salvar meu progresso e entregar a experiência do Prisma Financeiro.
+            </span>
+          </label>
           <button type="submit">Criar cadastro</button>
         </form>
 
