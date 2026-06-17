@@ -1,9 +1,17 @@
-const CACHE_NAME = "prisma-financeiro-v2";
+const CACHE_NAME = "prisma-financeiro-v3";
 const PUBLIC_SHELL = [
   "/",
-  "/entrar",
   "/manifest.json",
   "/assets/icon.svg"
+];
+
+const NETWORK_ONLY_PREFIXES = [
+  "/api/",
+  "/app",
+  "/app.html",
+  "/entrar",
+  "/cadastro",
+  "/boas-vindas"
 ];
 
 self.addEventListener("install", (event) => {
@@ -26,10 +34,25 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   const url = new URL(event.request.url);
-  const isAppRoute = url.pathname === "/app" || url.pathname === "/app.html";
+  const isNetworkOnly = NETWORK_ONLY_PREFIXES.some((prefix) => url.pathname.startsWith(prefix));
 
-  if (isAppRoute) {
+  if (isNetworkOnly) {
     event.respondWith(fetch(event.request));
+    return;
+  }
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/")))
+    );
     return;
   }
 
