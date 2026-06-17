@@ -842,6 +842,7 @@ const DEFAULT_CATEGORIES = [
 const ICON_LIBRARY = ['home','food','car','health','movie','book','screen','shop','briefcase','laptop','coins','plane','education','fitness','pet','baby','ring','bulb','cart','bolt','drop','phone','gift','sprout','mountain','rocket','lifebuoy','target','plant','card','receipt','bank','gear','spark'];
 
 const CC_BG = ['','alt','warm','dark'];
+const SERVER_AUTH = window.PRISMA_SERVER_AUTHENTICATED === true;
 
 /* ---------- ESTADO ---------- */
 let S = {
@@ -1152,7 +1153,7 @@ function startConversion(){
   /* Conversão correta: primeiro gera valor, depois pede cadastro. */
   S.postAuth = 'savePlan';
   S.authMode = 'signup';
-  S.isAuthed = false;
+  S.isAuthed = SERVER_AUTH;
   S.skipDx = false;
   S.intro = '';
   S.qi = 0;
@@ -1164,6 +1165,7 @@ function startConversion(){
 function startAuth(next){
   S.postAuth = next || 'intro';
   S.authMode = next === 'direct' ? 'login' : 'signup';
+  if(SERVER_AUTH){afterAuth();return}
   go('auth');
 }
 function goIntro(){go('intro')}
@@ -1195,6 +1197,7 @@ function submitAuth(){
   afterAuth();
 }
 function authScreen(){
+  if(SERVER_AUTH){afterAuth();return}
   const signup = S.authMode === 'signup';
   const savingPlan = S.postAuth === 'savePlan';
   const title = savingPlan ? 'Seu plano está pronto' : (signup ? 'Crie sua área Prisma' : 'Acesse seu Prisma Financeiro');
@@ -1315,6 +1318,7 @@ function result(){
 
 function savePlanGate(){
   /* Gate no momento certo: depois que o usuário já recebeu valor. */
+  if(SERVER_AUTH){enterDashboard();return}
   S.postAuth = 'savePlan';
   S.authMode = 'signup';
   try{ localStorage.setItem('prisma_temp_plan', JSON.stringify({name:S.name,intro:S.intro,answers:S.answers,scores:S.scores,profile:S.profile,data:S.data})); }catch(e){}

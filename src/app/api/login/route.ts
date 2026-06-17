@@ -22,7 +22,9 @@ export async function POST(request: Request) {
     redirect(next);
   }
 
-  if (!expectedPassword() || password !== expectedPassword()) {
+  const allowPasswordFallback = process.env.NODE_ENV !== "production";
+
+  if (!allowPasswordFallback || !expectedPassword() || password !== expectedPassword()) {
     redirect(`/entrar?erro=1&next=${encodeURIComponent(next)}`);
   }
 
