@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { getSupabaseUser, isSupabaseConfigured } from "./supabase";
+import { getSupabaseUser, isSupabaseConfigured, refreshSupabaseSession } from "./supabase";
 
 const COOKIE_NAME = "prisma_session";
 const SUPABASE_ACCESS_COOKIE = "prisma_supabase_access";
@@ -47,8 +47,8 @@ export function isValidSessionToken(token?: string) {
   return safeEqual(signature, sign(payload));
 }
 
-export async function isAuthenticated() {
-  if (isSupabaseConfigured() && (await getCurrentSupabaseUser())) return true;
+export async function isAuthenticated(allowRefresh = false) {
+  if (isSupabaseConfigured() && (await getCurrentSupabaseUser(allowRefresh))) return true;
 
   const store = await cookies();
   return isValidSessionToken(store.get(COOKIE_NAME)?.value);
@@ -59,9 +59,26 @@ export async function getSupabaseAccessToken() {
   return store.get(SUPABASE_ACCESS_COOKIE)?.value;
 }
 
-export async function getCurrentSupabaseUser() {
-  const token = await getSupabaseAccessToken();
-  return getSupabaseUser(token);
+export async function getSupabaseRefreshToken() {
+  const store = await cookies();
+  return store.get(SUPABASE_REFRESH_COOKIE)?.value;
+}
+
+export async function getCurrentSupabaseUser(allowRefresh = false) {
+  const accessToken = await getSupabaseAccessToken();
+  const currentUser = await getSupabaseUser(accessToken);
+  if (currentUser) return currentUser;
+
+  if (!allowRefresh) return null;
+
+  const refreshToken = await getSupabaseRefreshToken();
+  if (!refreshToken) return null;
+
+  const refreshedSession = await refreshSupabaseSession(refreshToken);
+  if (!refreshedSession?.access_token || !refreshedSession.user) return null;
+
+  await setSupabaseSessionCookies(refreshedSession);
+  return refreshedSession.user;
 }
 
 export async function setSupabaseSessionCookies(session: {

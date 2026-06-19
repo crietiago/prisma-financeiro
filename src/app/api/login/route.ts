@@ -1,4 +1,5 @@
 import { expectedPassword, setSessionCookie, setSupabaseSessionCookies } from "@/lib/auth";
+import { isSameOriginRequest } from "@/lib/request-security";
 import { isSupabaseConfigured, signInWithSupabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
@@ -8,6 +9,10 @@ function nextPath(formData: FormData) {
 }
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) {
+    return Response.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const formData = await request.formData();
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");

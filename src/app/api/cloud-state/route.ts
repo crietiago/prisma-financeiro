@@ -2,8 +2,8 @@ import { getCurrentSupabaseUser, getSupabaseAccessToken } from "@/lib/auth";
 import { readCloudState, writeCloudState } from "@/lib/supabase";
 
 export async function GET() {
+  const user = await getCurrentSupabaseUser(true);
   const token = await getSupabaseAccessToken();
-  const user = await getCurrentSupabaseUser();
 
   if (!token || !user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -12,8 +12,8 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  const user = await getCurrentSupabaseUser(true);
   const token = await getSupabaseAccessToken();
-  const user = await getCurrentSupabaseUser();
 
   if (!token || !user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 

@@ -58,6 +58,16 @@ export async function signInWithSupabase(email: string, password: string) {
   return (await response.json()) as SupabaseAuthSession;
 }
 
+export async function refreshSupabaseSession(refreshToken: string) {
+  const response = await supabaseFetch("/auth/v1/token?grant_type=refresh_token", {
+    method: "POST",
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  });
+
+  if (!response.ok) return null;
+  return (await response.json()) as SupabaseAuthSession;
+}
+
 export async function signUpWithSupabase(
   email: string,
   password: string,

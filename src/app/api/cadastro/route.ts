@@ -1,5 +1,6 @@
 import { setSupabaseSessionCookies } from "@/lib/auth";
 import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/compliance";
+import { isSameOriginRequest } from "@/lib/request-security";
 import { isSupabaseConfigured, signUpWithSupabase, writeConsentRecord } from "@/lib/supabase";
 import { createHmac } from "node:crypto";
 import { redirect } from "next/navigation";
@@ -19,6 +20,10 @@ function consentIpHash(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) {
+    return Response.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const formData = await request.formData();
   const name = String(formData.get("name") || "").trim();
   const email = String(formData.get("email") || "").trim().toLowerCase();
