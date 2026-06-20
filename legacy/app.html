@@ -868,7 +868,7 @@ let S = {
   }
 };
 
-const STORAGE_KEY = 'prisma_v15_mobile_marketing_corrigido_state';
+const STORAGE_KEY = window.PRISMA_STORAGE_KEY || 'prisma_v15_mobile_marketing_corrigido_state';
 
 function saveState(){
   try{

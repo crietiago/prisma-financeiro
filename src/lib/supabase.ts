@@ -21,12 +21,27 @@ type ConsentMetadata = {
   consent_ip_hash?: string;
 };
 
+type SupabaseAuthError = {
+  code?: string;
+  message?: string;
+};
+
+export type SupabaseSignUpResult =
+  | { session: SupabaseAuthSession; error: null }
+  | { session: null; error: SupabaseAuthError };
+
 function supabaseUrl() {
-  return process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "") || "";
+  return (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
 }
 
 function supabaseAnonKey() {
-  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  return (
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    ""
+  );
 }
 
 export function isSupabaseConfigured() {
@@ -85,8 +100,26 @@ export async function signUpWithSupabase(
     }),
   });
 
-  if (!response.ok) return null;
-  return (await response.json()) as SupabaseAuthSession;
+  if (!response.ok) {
+    const error = (await response.json().catch(() => ({}))) as {
+      error_code?: string;
+      code?: string;
+      msg?: string;
+      message?: string;
+    };
+    return {
+      session: null,
+      error: {
+        code: error.error_code || error.code,
+        message: error.msg || error.message,
+      },
+    } satisfies SupabaseSignUpResult;
+  }
+
+  return {
+    session: (await response.json()) as SupabaseAuthSession,
+    error: null,
+  } satisfies SupabaseSignUpResult;
 }
 
 export async function getSupabaseUser(accessToken?: string) {

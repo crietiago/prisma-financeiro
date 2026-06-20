@@ -9,9 +9,19 @@ function safeNext(next?: string) {
   return next && next.startsWith("/") && !next.startsWith("//") ? next : "/app";
 }
 
+function errorMessage(error?: string) {
+  if (error === "limite-email") {
+    return "O envio de confirmacao esta temporariamente indisponivel. Aguarde alguns minutos e tente novamente.";
+  }
+  if (error === "dados") return "Confira o e-mail e use uma senha segura com pelo menos 8 caracteres.";
+  if (error) return "Nao foi possivel criar o cadastro agora. Tente novamente em alguns minutos.";
+  return null;
+}
+
 export default async function CadastroPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const next = safeNext(params.next);
+  const alert = errorMessage(params.erro);
 
   if (await isAuthenticated()) redirect(next);
 
@@ -27,7 +37,7 @@ export default async function CadastroPage({ searchParams }: { searchParams: Sea
         {!isSupabaseConfigured() ? (
           <p className="alert">Cadastro em nuvem ainda nao configurado. Configure o Supabase na Vercel.</p>
         ) : null}
-        {params.erro ? <p className="alert">Nao foi possivel criar o cadastro. Confira os dados.</p> : null}
+        {alert ? <p className="alert">{alert}</p> : null}
 
         <form action="/api/cadastro" method="post" className="login-form">
           <input type="hidden" name="next" value={next} />

@@ -19,6 +19,12 @@ function consentIpHash(request: Request) {
   return createHmac("sha256", secret).update(ip).digest("base64url");
 }
 
+function signUpErrorPath(code?: string) {
+  if (code === "over_email_send_rate_limit") return "limite-email";
+  if (code === "email_address_invalid" || code === "weak_password") return "dados";
+  return "cadastro";
+}
+
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
@@ -55,14 +61,17 @@ export async function POST(request: Request) {
     consent_ip_hash: consentIpHash(request),
   };
 
-  const session = await signUpWithSupabase(email, password, name, welcomeUrl.toString(), consent);
-  if (!session) redirect(`/cadastro?erro=1&next=${encodeURIComponent(next)}`);
-
-  if (session.access_token && session.user?.id) {
-    await writeConsentRecord(session.access_token, session.user.id, consent);
+  const result = await signUpWithSupabase(email, password, name, welcomeUrl.toString(), consent);
+  if (!result.session) {
+    console.warn("Supabase sign-up failed", { code: result.error.code || "unknown" });
+    redirect(`/cadastro?erro=${signUpErrorPath(result.error.code)}&next=${encodeURIComponent(next)}`);
   }
 
-  if (await setSupabaseSessionCookies(session)) redirect(next);
+  if (result.session.access_token && result.session.user?.id) {
+    await writeConsentRecord(result.session.access_token, result.session.user.id, consent);
+  }
+
+  if (await setSupabaseSessionCookies(result.session)) redirect(next);
 
   redirect(`/entrar?cadastro=1&next=${encodeURIComponent(next)}`);
 }
