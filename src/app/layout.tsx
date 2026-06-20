@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   description: "Clareza financeira para pessoas e familias.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/assets/icon.svg",
-    apple: "/assets/icon.svg",
+    icon: "/brand/symbol",
+    apple: "/brand/symbol",
   },
 };
 

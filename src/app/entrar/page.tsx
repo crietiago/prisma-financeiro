@@ -16,8 +16,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
   return (
     <main className="login-shell">
       <section className="login-card" aria-label="Entrada Prisma Financeiro">
-        <img src="/assets/icon.svg" alt="" className="login-icon" />
-        <p className="eyebrow">Prisma Financeiro</p>
+        <div className="login-brand">
+          <img src="/brand/logo" alt="Prisma Financeiro" />
+        </div>
         <h1>Entrada segura</h1>
         <p className="lead">Acesse o app para continuar sua organizacao financeira.</p>
 

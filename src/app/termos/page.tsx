@@ -4,7 +4,9 @@ export default function TermosPage() {
   return (
     <main className="legal-shell">
       <article className="legal-document">
-        <p className="eyebrow">Prisma Financeiro</p>
+        <a className="legal-brand" href="/" aria-label="Voltar ao Prisma Financeiro">
+          <img src="/brand/logo" alt="Prisma Financeiro" />
+        </a>
         <h1>Termos de Uso</h1>
         <p className="legal-meta">Versão {TERMS_VERSION}</p>
 

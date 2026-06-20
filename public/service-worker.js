@@ -1,8 +1,9 @@
-const CACHE_NAME = "prisma-financeiro-v3";
+const CACHE_NAME = "prisma-financeiro-v4";
 const PUBLIC_SHELL = [
   "/",
   "/manifest.json",
-  "/assets/icon.svg"
+  "/brand/logo",
+  "/brand/symbol"
 ];
 
 const NETWORK_ONLY_PREFIXES = [

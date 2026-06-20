@@ -18,8 +18,9 @@ export default async function CadastroPage({ searchParams }: { searchParams: Sea
   return (
     <main className="login-shell">
       <section className="login-card" aria-label="Cadastro Prisma Financeiro">
-        <img src="/assets/icon.svg" alt="" className="login-icon" />
-        <p className="eyebrow">Prisma Financeiro</p>
+        <div className="login-brand">
+          <img src="/brand/logo" alt="Prisma Financeiro" />
+        </div>
         <h1>Criar acesso</h1>
         <p className="lead">Cadastre-se para salvar seu progresso financeiro na nuvem.</p>
 

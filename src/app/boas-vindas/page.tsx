@@ -13,8 +13,9 @@ export default async function BoasVindasPage({ searchParams }: { searchParams: S
   return (
     <main className="login-shell">
       <section className="login-card welcome-card" aria-label="Boas-vindas Prisma Financeiro">
-        <img src="/assets/icon.svg" alt="" className="login-icon" />
-        <p className="eyebrow">Prisma Financeiro</p>
+        <div className="login-brand">
+          <img src="/brand/logo" alt="Prisma Financeiro" />
+        </div>
         <h1>Bem-vindo(a)</h1>
         <p className="lead">
           Seu e-mail foi confirmado. Agora você pode continuar seu diagnóstico e salvar sua jornada financeira com
